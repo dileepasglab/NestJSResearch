@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseFilters, HttpException, HttpStatus } from '@nestjs/common';
 import { CatsService } from './cats.service';
+import { AllExceptionsFilter } from 'src/filters/all.exceptions.filter';
 
 @Controller('cats')
+// @UseFilters(AllExceptionsFilter) //apply controller level.
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
@@ -31,10 +33,19 @@ export class CatsController {
     this.catsService.createBulk(cats);
   }
 
-  //http://localhost:3000/cats/pet1
+  //http://localhost:3000/cats/filterCheck
+  @Get('filterCheck')
+  @UseFilters(AllExceptionsFilter) //apply method level.
+  filterCheck(): void {
+    throw new HttpException('Custom error message', HttpStatus.BAD_REQUEST);
+  }
+
+  // http://localhost:3000/cats/pet1
   @Get(':catName')
   findByName(@Param('catName') catName: string): any {
     const res =  this.catsService.findByName(catName);
     return res
   }
+
+  
 } 
