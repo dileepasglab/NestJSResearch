@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { CatsService } from './cats.service';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 @Controller('cats')
+// @UseGuards(AuthGuard) //guard apply controller level
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
@@ -20,6 +22,7 @@ export class CatsController {
 
   //http://localhost:3000/cats/count
   @Get('count')
+  @UseGuards(AuthGuard) //apply guard in route level.
   count(): number {
     return this.catsService.count();
   }
